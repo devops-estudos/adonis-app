@@ -11,6 +11,8 @@ on:
 env:
   DOCKER_REGISTRY: 057560478517.dkr.ecr.us-east-1.amazonaws.com
   IMAGE_NAME: devops-estudos/adonis-app
+  ARTIFACT_NAME: devops-estudos/adonis-app-${{ github.sha }}
+  AWS_REGION: us-east-1
   NODE_VERSION: 22
 
 jobs:
@@ -20,8 +22,7 @@ jobs:
       image_name_with_tag: ${{ steps.extract-first.outputs.first_tag }}
       artifact_name: ${{ env.ARTIFACT_NAME }}
     env:
-      DOCKER_FILE: .devops/docker/Dockerfile
-      ARTIFACT_NAME: stone-sre-devops-challenge-${{ github.sha }}
+      DOCKER_FILE: ./Dockerfile
 
     steps:
       - uses: actions/checkout@v4
@@ -78,7 +79,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
           role-to-assume: ${{ secrets.OIDC_ARN_ROLE}}
-          aws-region: us-east-1
+          aws-region: ${{ env.AWS_REGION }}
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
